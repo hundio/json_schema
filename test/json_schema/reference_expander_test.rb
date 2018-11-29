@@ -19,6 +19,34 @@ describe JsonSchema::ReferenceExpander do
     assert_equal referenced.uri, reference.uri
   end
 
+  it "expands deeply nested references across a document store" do
+    store = document_store_sample
+
+    expand schema_sample: document_store_schema_sample, store: store
+    assert_equal [], error_messages
+
+    referenced = store.lookup_schema "file:/extra.json#"
+    reference = @schema.all_of[1].all_of[0]
+
+    assert_equal referenced.description, reference.description
+    assert_equal referenced.id, reference.id
+    assert_equal referenced.type, reference.type
+    assert_equal referenced.uri, reference.uri
+  end
+
+  it "expands deeply nested references" do
+    expand schema_sample: deeply_nested_schema_sample
+    assert_equal [], error_messages
+
+    referenced = @schema.definitions["extra"]
+    reference = @schema.all_of[1].all_of[0]
+
+    assert_equal referenced.description, reference.description
+    assert_equal referenced.id, reference.id
+    assert_equal referenced.type, reference.type
+    assert_equal referenced.uri, reference.uri
+  end
+
   it "takes a document store" do
     store = JsonSchema::DocumentStore.new
     expand(store: store)
@@ -293,8 +321,21 @@ describe JsonSchema::ReferenceExpander do
     @schema_sample ||= DataScaffold.schema_sample
   end
 
+  def document_store_sample
+    @document_store_sample ||= DataScaffold.document_store_sample
+  end
+
+  def document_store_schema_sample
+    @document_store_schema_sample ||= DataScaffold.document_store_schema_sample
+  end
+
+  def deeply_nested_schema_sample
+    @deeply_nested_schema_sample ||= DataScaffold.deeply_nested_schema_sample
+  end
+
   def expand(options = {})
-    @schema = JsonSchema::Parser.new.parse!(schema_sample)
+    sample = options.delete(:schema_sample) || schema_sample
+    @schema = JsonSchema::Parser.new.parse!(sample)
     @expander = JsonSchema::ReferenceExpander.new
     @expander.expand(@schema, options)
   end

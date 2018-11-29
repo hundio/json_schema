@@ -1,0 +1,14 @@
+{
+  "id": "file:/extension.json#",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "description": "an extension to the core document",
+  "allOf": [
+    { "$ref": "file:/extra.json#" },
+    {
+      "required": ["extension_id"],
+      "properties": {
+        "extension_id": { "type": ["string"] }
+      }
+    }
+  ]
+}

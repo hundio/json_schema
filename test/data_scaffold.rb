@@ -5,6 +5,77 @@ module DataScaffold
     }
   end
 
+  def self.document_store_sample
+    document_store = JsonSchema::DocumentStore.new
+
+    Dir.glob("test/data/**/*.json").
+      map { |path| File.read(path) }.
+      map { |data| JsonSchema.parse!(JSON.parse(data)) }.
+      each { |schema| document_store.add_schema(schema) }
+
+    document_store
+  end
+
+  def self.document_store_schema_sample
+    {
+      "$schema" => "http://json-schema.org/draft-04/hyper-schema",
+      "type" => ["object"],
+      "allOf" => [
+        { "$ref" => "file:/core.json#" },
+        { "$ref" => "file:/extension.json#" },
+      ]
+    }
+  end
+
+  def self.deeply_nested_schema_sample
+    {
+      "$schema" => "http://json-schema.org/draft-04/hyper-schema",
+      "title" => "Deeply Nested Schema",
+      "description" => "An object described by a deeply nested schema.",
+      "type" => ["object"],
+      "definitions" => {
+        "core" => {
+          "id" => "core",
+          "$schema" => "http://json-schema.org/draft-04/hyper-schema",
+          "description" => "a generic core document",
+          "type" => ["object"],
+          "required" => ["name"],
+          "properties" => {
+            "name" => { "type" => ["string"] }
+          }
+        },
+        "extension" => {
+          "id" => "extension",
+          "$schema" => "http://json-schema.org/draft-04/hyper-schema",
+          "description" => "an extension to the core document",
+          "allOf" => [
+            { "$ref" => "#/definitions/extra" },
+            {
+              "required" => ["extension_id"],
+              "properties" => {
+                "extension_id" => { "type" => ["string"] }
+              }
+            }
+          ]
+        },
+        "extra" => {
+          "id" => "extra",
+          "$schema" => "http://json-schema.org/draft-04/hyper-schema",
+          "description" => "supplementary data for an extension",
+          "type" => ["object"],
+          "required" => ["description"],
+          "properties" => {
+            "description" => { "type" => ["string"] }
+          }
+        }
+      },
+      "allOf" => [
+        { "$ref" => "#/definitions/core" },
+        { "$ref" => "#/definitions/extension" },
+      ]
+    }
+  end
+
   def self.schema_sample
     {
       "$schema" => "http://json-schema.org/draft-04/hyper-schema",

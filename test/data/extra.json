@@ -1,0 +1,10 @@
+{
+  "id": "file:/extra.json#",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "description": "supplementary data for an extension",
+  "type": ["object"],
+  "required": ["description"],
+  "properties": {
+    "description": { "type": ["string"] }
+  }
+}

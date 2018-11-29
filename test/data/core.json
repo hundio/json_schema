@@ -1,0 +1,10 @@
+{
+  "id": "file:/core.json#",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "description": "a generic core document",
+  "type": ["object"],
+  "required": ["name"],
+  "properties": {
+    "name": { "type": ["string"] }
+  }
+}

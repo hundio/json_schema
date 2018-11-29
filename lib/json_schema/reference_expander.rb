@@ -119,6 +119,8 @@ module JsonSchema
         end
       end
 
+      traverse_schema ref_schema if ref_schema.uri && URI.parse(ref_schema.uri).absolute?
+
       true
     end
 
